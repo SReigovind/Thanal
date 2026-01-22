@@ -10,13 +10,13 @@ We have developed a VNIR Estimation model based on U-Net with Attention mechanis
 A Gradio interface is available for demonstrating the model's capabilities.
 
 ## Installation
-````md
+
 ## Setup
 
 ### 1. Create Virtual Environment
 ```bash
 python -m venv thanal
-````
+```
 
 ### 2. Activate Environment
 
@@ -26,7 +26,7 @@ python -m venv thanal
 thanal\Scripts\activate
 ```
 
-**macOS / Linux**
+**macOS/Linux**
 
 ```bash
 source thanal/bin/activate
@@ -54,8 +54,6 @@ pip install -r requirements.txt
 
 ```bash
 python -c "import gradio, torch, torchvision, PIL, numpy"
-```
-
 ```
 
 ## License
