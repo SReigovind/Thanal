@@ -2,4 +2,10 @@
 *.png
 *.jpg
 *.jpeg
-/demo
+monitoring_logs/
+__pycache__/
+ThanalModel.pth
+.gitattributes
+*/
+.gitignore
+.DS_Store
