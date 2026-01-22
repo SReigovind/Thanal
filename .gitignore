@@ -4,8 +4,7 @@
 *.jpeg
 monitoring_logs/
 __pycache__/
-ThanalModel.pth
-.gitattributes
-*/
-.gitignore
+thanal/
 .DS_Store
+.vscode/
+env/
