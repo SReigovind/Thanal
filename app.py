@@ -171,7 +171,7 @@ def predict_vnir(input_img):
 
 with gr.Blocks() as demo:
     gr.Markdown("# 🌱 Virtual NIR Estimation Demo")
-    gr.Markdown("Upload a standard RGB image of a Capsicum leaf, and this AI will generate its corresponding Near-Infrared (NIR) view.")
+    gr.Markdown("Upload a standard RGB image of a leaf, and this AI will generate its corresponding Near-Infrared (NIR) view.")
     
     with gr.Row():
         with gr.Column():
