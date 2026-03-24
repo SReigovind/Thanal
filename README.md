@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/Status-Active-success)
 ![Use Case](https://img.shields.io/badge/Use--Case-Plant%20Health%20Monitoring-brightgreen)
 
-**ThanalEdge** is an edge-native plant health intelligence system that combines computer vision and VNIR (Visible + Near Infrared) inference to detect early signs of crop stress in real time.
+**ThanalEdge** is an edge-native plant health intelligence system that combines computer vision and VNIR (Virtual NIR) inference to detect early signs of crop stress in real time.
 
 It is designed for **low-power edge environments** (e.g., Raspberry Pi, field kiosks) and provides **continuous monitoring, temporal analysis, and instant alerts**.
 
@@ -45,7 +45,7 @@ Camera Input → Leaf Segmentation → VNIR Inference → Health Analysis → Al
 
 3. **VNIR Inference Engine**
 
-   * ONNX model converts RGB → simulated VNIR
+   * ONNX model converts RGB → VNIR
    * Optimized for CPU-only edge devices
 
 4. **Health Analyzer**
@@ -173,10 +173,8 @@ This allows long-term monitoring and trend analysis across multiple zones.
 
 ## 🔮 Future Scope
 
-* Multi-spectral sensor integration
-* Web-based analytics dashboard
-* AI-driven disease classification
-* Cloud + edge hybrid syncing
-* Autonomous irrigation triggers
+* 🧠 Improved VNIR model with larger, more diverse training data
+* 🌐 Integration with IoT sensors for stress cause identification
+* 🤖 Automated responses (irrigation, nutrients, environment control)
 
 ---
