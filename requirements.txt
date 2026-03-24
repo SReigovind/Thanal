@@ -1,0 +1,9 @@
+numpy
+Pillow
+opencv-python
+requests
+twilio
+onnx
+onnxruntime
+twilio
+python-dotenv
