@@ -1,26 +1,182 @@
-# Project Thanal: Edge-Optimized VNIR Crop Monitoring 🌿
-*An e-Yantra National Finals Project*
+# 🌿 ThanalEdge
 
-Edge-optimized deployment of Project Thanal, a low-cost, software-driven Virtual Near-Infrared (VNIR) crop monitoring system. It leverages an ONNX-accelerated vision pipeline and a multi-camera IoT hub architecture to detect early-stage plant stress on resource-constrained hardware.
+![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![Edge AI](https://img.shields.io/badge/Edge-AI-green)
+![ONNX](https://img.shields.io/badge/ONNX-Runtime-orange)
+![Status](https://img.shields.io/badge/Status-Active-success)
+![Use Case](https://img.shields.io/badge/Use--Case-Plant%20Health%20Monitoring-brightgreen)
 
-## 📖 Project Overview
-Thanal democratizes precision agriculture for small-to-medium farmers by utilizing standard RGB webcams to synthesize VNIR maps. This allows for the detection of invisible, early-stage physiological plant stress days before visible symptoms (like chlorosis) occur, eliminating the need for expensive multispectral hardware.
+**ThanalEdge** is an edge-native plant health intelligence system that combines computer vision and VNIR (Visible + Near Infrared) inference to detect early signs of crop stress in real time.
 
-## ⚙️ How It Works (The Pipeline)
-The system operates through a compute-aware, multi-stage pipeline designed specifically for edge devices:
+It is designed for **low-power edge environments** (e.g., Raspberry Pi, field kiosks) and provides **continuous monitoring, temporal analysis, and instant alerts**.
 
-1. **Dynamic Leaf Isolation:** Incoming frames pass through an HSV color-space cascade and morphological filtering to isolate true leaf tissue and reject background noise (dirt, shadows, equipment).
-2. **Compute-Aware Routing:** * If severe visual chlorosis (yellowing/browning) is detected, the system flags a **Critical Alert** and intelligently bypasses the heavy AI inference to save edge compute cycles.
-   * If the leaf appears visually healthy (green), the isolated tissue is routed to the AI engine.
-3. **VNIR Synthesis:** The ONNX-optimized `UNet-Attention` model synthesizes a highly accurate Grayscale VNIR map from the isolated RGB input.
-4. **Temporal Health Tracking:** The system calculates a VNIR-to-Green ratio and compares it against the plant's own rolling 5-scan historical baseline. This local normalization mitigates false flags caused by changing environmental lighting across different times of the day.
+---
 
-## 🏗️ System Architecture (Decoupled NVR)
-To prevent network bottlenecks and thread-locking on the primary edge device (Raspberry Pi 4), Thanal utilizes a professional Network Video Recorder (NVR) / IoT Hub topology:
+## 🌱 Core Idea
 
-* **The IoT Video Gateway (Hub):** A centralized machine (PC/Mac) handles the messy hardware drivers, continuously clears physical USB buffers, and fetches IP camera streams. It acts as a middleman, serving the latest frames instantly via a lightweight HTTP Flask server.
-* **The Edge Orchestrator (Pi 4):** The edge device requests frames from the Gateway over Wi-Fi using **Time-Division Multiplexing (TDM)**. It queries one camera feed every 20 seconds, staggered by a 10-second offset. This strict scheduling guarantees the Pi's CPU never attempts to run parallel AI inferences, preventing thermal throttling and RAM overflow.
+Plants reflect light differently when stressed—especially in the **near-infrared spectrum**.
 
-## 🧠 Key Engineering Innovations
-* **Graph-Optimized Inference:** The original 130MB PyTorch model was traced and exported to a static **ONNX** execution graph. The edge device runs entirely on `onnxruntime` (C++ backend), freeing up over 1GB of RAM by completely removing PyTorch dependencies.
-* **Hardware Agnostic:** Because the Gateway hub abstracts the camera hardware into simple HTTP endpoints, the Edge node can process feeds from USB webcams, ESP32-Cams, or enterprise IP cameras simultaneously without altering the core inference code.
+ThanalEdge:
+
+* Synthesizes VNIR data from RGB images using an AI model
+* Tracks changes in plant reflectance over time
+* Detects **invisible early stress signals before visible symptoms appear**
+
+---
+
+## 🧠 System Architecture
+
+```id="arch01"
+Camera Input → Leaf Segmentation → VNIR Inference → Health Analysis → Alert System
+```
+
+### Pipeline Breakdown
+
+1. **Image Acquisition**
+
+   * Captured from USB or IP cameras via an IoT hub
+
+2. **Leaf Segmentation**
+
+   * HSV-based detection of:
+
+     * 🌿 Healthy (green)
+     * 🍂 Stressed (yellow/brown)
+
+3. **VNIR Inference Engine**
+
+   * ONNX model converts RGB → simulated VNIR
+   * Optimized for CPU-only edge devices
+
+4. **Health Analyzer**
+
+   * Computes:
+
+     * Average green intensity
+     * Average VNIR intensity
+     * VNIR/Green ratio
+   * Maintains historical trends per camera
+
+5. **Decision Engine**
+
+   * Evaluates deviations from baseline
+   * Detects early stress conditions
+
+6. **Notification Layer**
+
+   * Sends WhatsApp alerts with optional image snapshots
+
+---
+
+## 📊 Health Intelligence Model
+
+ThanalEdge does not rely on a single frame—it builds **temporal understanding**.
+
+### Key Metrics
+
+* **VNIR / Green Ratio**
+* **Baseline (first 5 scans)**
+* **Rolling averages (last 5 scans)**
+* **Global trend comparison**
+
+### Decision Logic
+
+* 📉 Significant drop vs baseline → `ALERT: STRESS`
+* 🍂 Yellow/Brown detection → `CRITICAL: Visual Stress`
+* 📈 Stable trends → `Healthy Tracking`
+* ⏳ Initial phase → `Calibrating`
+
+---
+
+## 🖥️ Edge Dashboard
+
+Each processed frame produces a compact **310×235 monitoring panel** containing:
+
+* VNIR visualization map
+* Current health status
+* Numerical metrics
+* Temporal trend indicators
+
+This enables real-time monitoring on **low-resolution kiosk displays**.
+
+---
+
+## 📡 Multi-Camera TDM System
+
+ThanalEdge supports multiple cameras using a **Time Division Multiplexing (TDM)** approach:
+
+* Alternates between camera streams at fixed intervals
+* Maintains independent health histories per camera
+* Displays a unified dual-panel dashboard
+
+---
+
+## ⚠️ Smart Alerting
+
+* Triggered on:
+
+  * VNIR-based stress detection
+  * Visual stress (yellow/brown leaves)
+* Includes:
+
+  * Location (camera ID)
+  * Stress severity
+  * % deviation from baseline
+  * Optional VNIR image snapshot
+* Built-in cooldown system to prevent alert spam
+
+---
+
+## 🧾 Persistent Tracking
+
+Each camera maintains its own:
+
+* 📄 CSV log file
+* 📈 Historical ratios
+* 🧠 Independent baseline calibration
+
+This allows long-term monitoring and trend analysis across multiple zones.
+
+---
+
+## 🧩 Module Overview
+
+| Module             | Responsibility                     |
+| ------------------ | ---------------------------------- |
+| `processor.py`     | Core pipeline orchestration        |
+| `inference.py`     | ONNX VNIR model execution          |
+| `analyzer.py`      | Temporal health tracking & logging |
+| `notifier.py`      | WhatsApp alert system              |
+| `tdm.py`           | Multi-camera edge dashboard        |
+
+---
+
+## ⚡ Design Philosophy
+
+* **Edge-first** → No cloud dependency required
+* **Lightweight** → Optimized for CPU + low RAM
+* **Real-time** → Instant processing & alerts
+* **Temporal-aware** → Focus on trends, not snapshots
+* **Fail-safe** → Works even with partial/noisy inputs
+
+---
+
+## 🌍 Use Cases
+
+* Smart agriculture 🌾
+* Greenhouse monitoring 🌱
+* Plantation health tracking 🌴
+* Research & phenotyping 🔬
+* Remote farm surveillance 📡
+
+---
+
+## 🔮 Future Scope
+
+* Multi-spectral sensor integration
+* Web-based analytics dashboard
+* AI-driven disease classification
+* Cloud + edge hybrid syncing
+* Autonomous irrigation triggers
+
+---
